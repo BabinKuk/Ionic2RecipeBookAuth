@@ -2,10 +2,10 @@ import { Ingredient } from "./ingredient.model";
 
 export class Recipe {
 
-  title: string;
-  description: string;
-  difficulty: string;
-  ingredients: Ingredient[];
+  private title: string;
+  private description: string;
+  private difficulty: string;
+  private ingredients: Ingredient[];
 
   constructor(public title: string,
     public description: string,

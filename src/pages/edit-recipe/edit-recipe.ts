@@ -73,7 +73,7 @@ export class EditRecipePage implements OnInit{
   }
 
   onSubmit() {
-    console.log('submit form ', this.recipeForm.value);
+    // console.log('submit form ', this.recipeForm.value);
     // init recipe
     const value = this.recipeForm.value;
 
@@ -97,7 +97,7 @@ export class EditRecipePage implements OnInit{
   }
 
   onManageIngredients() {
-    //console.log('Manage Ingredients');
+    // console.log('Manage Ingredients');
     let actionSheet = this.actionSheetCtrl.create({
       title: 'What do you want to do?',
       buttons: [
@@ -112,14 +112,21 @@ export class EditRecipePage implements OnInit{
           text: 'Remove All',
           role: 'destructive',
           handler: () => {
-            console.log('Remove all clicked');
+            // console.log('Remove all clicked');
             this.removeAllIngredients();
+          }
+        },{
+          text: 'Remove Ingredient',
+          //role: 'cancel',
+          handler: () => {
+            // console.log('Remove ingredient clicked');
+            this.removeIngredient();
           }
         },{
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            // console.log('Cancel clicked');
           }
         }
       ]
@@ -142,13 +149,13 @@ export class EditRecipePage implements OnInit{
         {
           text: 'Cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            // console.log('Cancel clicked');
           }
         },
         {
           text: 'Add',
           handler: data => {
-            console.log('Add clicked');
+            // console.log('Add clicked');
             if (data.name.trim() == '' || data.name == null) {
               this.presentToast('Please enter valid ingredient name');
               return;
@@ -167,15 +174,57 @@ export class EditRecipePage implements OnInit{
     return prompt;
   }
 
+  private removeIngredient() {
+    // console.log('remove ingredient');
+
+    let frmArray = <FormArray>this.recipeForm.get('ingredients');
+    let frmLen = frmArray.length;
+    // console.log(frmArray, frmLen);
+
+    if (frmLen > 0) {
+      let alert = this.alertCtrl.create();
+      alert.setTitle('Which ingredients do you want to delete?');
+
+      for (let i = 0; i <= frmLen - 1; i++) {
+        alert.addInput({
+          type: 'checkbox',
+          label: frmArray.value[i],
+          value: '' + i
+        });
+      }
+
+      alert.addButton('Cancel');
+      alert.addButton({
+        text: 'Delete',
+        handler: data => {
+          console.log('Checkbox data:', data);
+          if (data.length == 0) {
+            // show message
+            this.presentToast('Please select ingredients to delete');
+          } else {
+            // delete selected ingredients
+            this.removeSelectedIgredients(data);
+            // show message
+            this.presentToast('Selected ingredients deleted');
+          }
+        }
+      });
+      alert.present();
+    } else {
+      // show message
+      this.presentToast('There are no ingredients for this recipe');
+    }
+  }
+
   removeAllIngredients() {
-    console.log('Remove All Ingredients');
+    // console.log('Remove All Ingredients');
     const frmArray = <FormArray>this.recipeForm.get('ingredients');
     //console.log(frmArray);
     const frmLen = frmArray.length;
     // loop if length>0
     if (frmLen > 0) {
       for (let i = frmLen - 1; i >= 0; i--) { //backwards
-        console.log('remove i ' + i + ' ' + frmArray.value[i]);
+        // console.log('remove i ' + i + ' ' + frmArray.value[i]);
         frmArray.removeAt(i);
 
         // show message
@@ -184,12 +233,32 @@ export class EditRecipePage implements OnInit{
     }
   }
 
-  presentToast(msg: string) {
+  private presentToast(msg: string) {
     let toast = this.toastCtrl.create({
       message: msg,
       duration: 2000
     });
     toast.present();
+  }
+
+  private removeSelectedIgredients(data: any) {
+    const frmArray = <FormArray>this.recipeForm.get('ingredients');
+    const frmLen = frmArray.length;
+    const dataLen = data.length;
+    // console.log('remove selected', data, dataLen, frmLen, frmArray);
+
+    // loop if length>0
+    data.forEach(element => {
+      // console.log(element);
+      if (frmLen > 0) {
+        for (let i = frmLen - 1; i >= 0; i--) { //backwards
+          if (i == parseInt(element)) {
+            console.log('element ' + element + ' ' + 'remove i ' + i + ' ' + frmArray.value[i]);
+            frmArray.removeAt(i);
+          }
+        }
+      }
+    });
   }
 
 }

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams; ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
 import { Recipe } from '../../models/recipe.model';
 import { EditRecipePage } from '../edit-recipe/edit-recipe';
 import { ShoppingListService } from '../../services/shopping-list.service';
-import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { RecipeService } from '../../services/recipe.service';
 
 /**
@@ -27,6 +26,7 @@ export class RecipePage implements OnInit{
               public navParams: NavParams,
               private shoppingListService: ShoppingListService,
               private toastCtrl: ToastController,
+              private alertCtrl: AlertController,
               private recipeService: RecipeService) {
   }
 
@@ -52,13 +52,32 @@ export class RecipePage implements OnInit{
 
   onDeleteRecipe() {
     console.log('on Delete Recipe');
-    this.recipeService.removeRecipe(this.index);
+    let confirm = this.alertCtrl.create({
+      title: 'Delete Recipe?',
+      message: 'Do you really want to delete this recipe?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+            // console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Agree',
+          handler: () => {
+            // console.log('Agree clicked');
+            this.recipeService.removeRecipe(this.index);
 
-    // show message
-    this.presentToast('Recipe Deleted successfully');
+            // show message
+            this.presentToast('Recipe Deleted successfully');
 
-    // navigate to root page
-    this.navCtrl.popToRoot();
+            // navigate to root page
+            this.navCtrl.popToRoot();
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
 
   addIngredients() {

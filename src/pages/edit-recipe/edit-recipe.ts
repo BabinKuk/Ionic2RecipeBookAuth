@@ -244,7 +244,7 @@ export class EditRecipePage implements OnInit{
   private removeSelectedIgredients(data: any) {
     const frmArray = <FormArray>this.recipeForm.get('ingredients');
     const frmLen = frmArray.length;
-    const dataLen = data.length;
+    //const dataLen = data.length;
     // console.log('remove selected', data, dataLen, frmLen, frmArray);
 
     // loop if length>0
